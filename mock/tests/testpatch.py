@@ -59,6 +59,10 @@ class Foo(object):
     def a_static():
         return 24
 
+    @staticmethod
+    def arg_static(x):
+        return 24 + x
+
     @classmethod
     def a_class(cls):
         return 42
@@ -1006,6 +1010,9 @@ class PatchTest(unittest.TestCase):
     def test_autospec_staticmethod(self):
         with patch('%s.Foo.a_static' % __name__, autospec=True) as method:
             Foo.a_static()
+            method.assert_called_once_with()
+        with patch('%s.Foo.arg_static' % __name__, autospec=True) as method:
+            Foo.arg_static() # should fail
             method.assert_called_once_with()
 
 
