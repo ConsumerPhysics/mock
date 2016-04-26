@@ -51,6 +51,7 @@ __all__ = (
     'NonCallableMagicMock',
     'mock_open',
     'PropertyMock',
+    '_callable',
 )
 
 
@@ -62,7 +63,7 @@ try:
     import builtins
 except ImportError:
     import __builtin__ as builtins
-from types import ModuleType
+from types import ModuleType, MethodType
 
 import six
 from six import wraps
@@ -240,6 +241,8 @@ def _copy_func_details(func, funcopy):
 def _callable(obj):
     if isinstance(obj, ClassTypes):
         return True
+    if isinstance(obj, (staticmethod, classmethod, MethodType)):
+        return _callable(obj.__func__)
     if getattr(obj, '__call__', None) is not None:
         return True
     return False
